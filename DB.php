@@ -1,7 +1,7 @@
 <?php
-class Database {
+class DB {
     private $host = 'localhost';
-    private $dbname = 'your_database';
+    private $dbname = 'work_of_tracker';
     private $username = 'root';
     private $password = '5555';
     public $pdo;

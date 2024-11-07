@@ -36,32 +36,11 @@
   </thead>
   <tbody>
     <?php
-        require 'DB.php';
-
-        $db = new DB();
         
-        $pdo = $db->pdo;
-    
-        const REQUIRED_WORK_HOUR_DAILY = 8;
-    // foreach ($records as $record) {
-    //     echo "<tr>
-    //         <td>{$record['id']}</td>
-    //         <td>{$record['name']}</td>
-    //         <td>{$record['arrived_at']}</td>
-    //         <td>{$record['leaved_at']}</td>
-    //         <td>" . gmdate('H:i', $record['required_of'])
-    // }
-        
-        $stmt = $pdo->query("SELECT * FROM work_time");
-        foreach($stmt as $row) {
-            echo "<tr>";
-            echo "<td>" . $row['id'] . "</td>";
-            echo "<td>" . $row['name'] . "</td>";
-            echo "<td>" . $row['arrived_at'] . "</td>";
-            echo "<td>" . $row['leaved_at'] . "</td>";
-            echo "</tr>";
+    require 'WorkDay.php';
+    $workday = new WorkDay();
 
-        }
+
 
     ?>
   </tbody>
@@ -72,26 +51,7 @@
     
     if (isset($_POST['name']) && isset($_POST['arrived_at']) && isset($_POST['leaved_at'])) {
         if (!empty($_POST['name']) && !empty($_POST['arrived_at']) && !empty($_POST['leaved_at'])){
-            $name = $_POST['name'];
-            $arrived_at = new DateTime($_POST['arrived_at']);
-            $leaved_at = new DateTime($_POST['leaved_at']);
-
-            $diff = $arrived_at->diff($leaved_at);
-            $hour = $diff->h;
-            $minute = $diff->i;
-            $second = $diff->s;
-            $total = ((REQUIRED_WORK_HOUR_DAILY * 3600) - ($hour * 3600) + ($minute * 60));
-
-            $query = "INSERT INTO work_time (name,arrived_at,leaved_at)
-                VALUES (:name, :arrived_at, :leaved_at)";
-            $stmt = $pdo->prepare($query);
-    
-            $stmt->bindParam(':name', $name);
-            $stmt->bindValue('arrived_at', $arrived_at->format('Y-m-d H:i'));
-            $stmt->bindValue('leaved_at', $leaved_at->format('Y-m-d H:i'));
-            $stmt->execute();
-            header('Location: index.php');
-            return;
+           $workday->store($_POST['name'],$_POST['arrived_at'],$_POST['leaved_at']);
         }
     
     }
